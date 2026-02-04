@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>BUFF機提醒計時器 - 專業版</title>
+    <style>
+        :root { 
+            --primary: #a855f7; 
+            --bg: #020617; 
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --accent: #22d3ee;
+        }
+        body { 
+            font-family: "Microsoft JhengHei", sans-serif; 
+            background: var(--bg); 
+            color: var(--text);
+            padding: 20px; margin: 0;
+        }
+        
+        /* 全域控制區 */
+        .master-controls {
+            text-align: center;
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+            border: 2px solid var(--primary);
+            max-width: 1050px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .btn-master {
+            font-size: 1.1rem;
+            padding: 12px 35px;
+            margin: 5px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            font-weight: bold;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-master.start { background: #059669; color: white; box-shadow: 0 4px 0 #064e3b; }
+        .btn-master.reset { background: #dc2626; color: white; box-shadow: 0 4px 0 #7f1d1d; }
+        .btn-master:active { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
+
+        .timer-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px; 
+            max-width: 1100px; 
+            margin: 0 auto;
+        }
+
+        .timer-card { 
+            background: var(--card-bg); 
+            border-radius: 12px; 
+            padding: 18px; 
+            border: 1px solid #334155;
+            position: relative;
+            overflow: hidden;
+        }
+        .timer-card::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--primary);
+        }
+        
+        .timer-header { 
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; 
+        }
+        .timer-name {
+            background: rgba(0,0,0,0.3);
+            color: var(--accent);
+            border: 1px solid #475569;
+            padding: 4px 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            width: 150px;
+            border-radius: 4px;
+        }
+        
+        .display { 
+            font-family: 'Courier New', monospace; 
+            font-size: 2.8rem; 
+            font-weight: bold; 
+            text-align: center; 
+            margin: 12px 0; 
+            background: #000; 
+            color: #4ade80; 
+            border-radius: 8px;
+            padding: 8px;
+            border: 1px solid #166534;
+        }
+
+        .input-group { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .input-box { display: flex; flex-direction: column; align-items: center; font-size: 11px; color: #94a3b8; }
+        .input-box input { 
+            background: #0f172a; color: #fff; border: 1px solid #475569; 
+            width: 45px; text-align: center; border-radius: 4px; font-size: 1rem; padding: 4px;
+        }
+
+        .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 15px; }
+        .controls button { cursor: pointer; border: none; border-radius: 4px; padding: 8px; font-weight: bold; color: white; }
+        .btn-s { background: #16a34a; }
+        .btn-p { background: #d97706; }
+        .btn-r { background: #991b1b; }
+
+        .settings-panel { font-size: 12px; background: rgba(15, 23, 42, 0.5); padding: 10px; border-radius: 8px; border: 1px solid #334155; }
+        .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        select, .msg-input { background: #334155; color: white; border: 1px solid #475569; padding: 4px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="master-controls">
+    <h1 style="margin: 0 0 15px 0; font-size: 2rem;">⚔️ BUFF機提醒計時器</h1>
+    <button class="btn-master start" onclick="allStart()">⚡ 全體啟動</button>
+    <button class="btn-master reset" onclick="allReset()">🔄 全體重置</button>
+</div>
+
+<div class="timer-grid" id="app"></div>
+
+<script>
+    const app = document.getElementById('app');
+    const timerData = {};
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    for (let i = 1; i <= 6; i++) {
+        createTimer(i);
+    }
+
+    function createTimer(id) {
+        const card = document.createElement('div');
+        card.className = 'timer-card';
+        card.innerHTML = `
+            <div class="timer-header">
+                <input type="text" class="timer-name" value="BUFF ${id}">
+                <label style="font-size: 11px; cursor:pointer;"><input type="checkbox" id="auto-${id}"> 自動循環</label>
+            </div>
+            
+            <div class="input-group">
+                <div class="input-box"><input type="number" id="h-${id}" value="0" min="0">時</div>
+                <div class="input-box"><input type="number" id="m-${id}" value="0" min="0" max="59">分</div>
+                <div class="input-box"><input type="number" id="s-${id}" value="0" min="0" max="59">秒</div>
+            </div>
+
+            <div class="display" id="display-${id}">00:00:00</div>
+            
+            <div class="controls">
+                <button class="btn-s" onclick="startTimer(${id})">開始</button>
+                <button class="btn-p" onclick="pauseTimer(${id})">暫停</button>
+                <button class="btn-r" onclick="resetTimer(${id})">重置</button>
+            </div>
+
+            <div class="settings-panel">
+                <div class="row">
+                    <span>提示模式:</span>
+                    <select id="type-${id}" onchange="toggleMode(${id})">
+                        <option value="beep">嗶聲 (Beep)</option>
+                        <option value="tts">語音 (TTS)</option>
+                    </select>
+                </div>
+                <div id="panel-beep-${id}">
+                    <div class="row"><span>響鈴次數:</span><input type="number" id="count-${id}" value="3" min="1" style="width:35px" class="msg-input"></div>
+                </div>
+                <div id="panel-tts-${id}" style="display:none">
+                    <input type="text" id="msg-${id}" value="Buff時間到" class="msg-input" style="width:90%; margin-bottom:5px;">
+                    <div class="row"><span>速度</span><input type="range" id="rate-${id}" min="0.5" max="2" step="0.1" value="1"></div>
+                </div>
+                <div class="row"><span>主音量</span><input type="range" id="vol-${id}" min="0" max="1" step="0.1" value="0.5"></div>
+            </div>
+        `;
+        app.appendChild(card);
+        timerData[id] = { interval: null, remaining: 0 };
+    }
+
+    function toggleMode(id) {
+        const type = document.getElementById(`type-${id}`).value;
+        document.getElementById(`panel-beep-${id}`).style.display = type === 'beep' ? 'block' : 'none';
+        document.getElementById(`panel-tts-${id}`).style.display = type === 'tts' ? 'block' : 'none';
+    }
+
+    function getSeconds(id) {
+        const h = parseInt(document.getElementById(`h-${id}`).value) || 0;
+        const m = parseInt(document.getElementById(`m-${id}`).value) || 0;
+        const s = parseInt(document.getElementById(`s-${id}`).value) || 0;
+        return h * 3600 + m * 60 + s;
+    }
+
+    function startTimer(id) {
+        if (timerData[id].interval) return;
+        if (timerData[id].remaining <= 0) timerData[id].remaining = getSeconds(id);
+        if (timerData[id].remaining <= 0) return; 
+
+        timerData[id].interval = setInterval(() => {
+            if (timerData[id].remaining <= 0) {
+                handleAlarm(id);
+                return;
+            }
+            timerData[id].remaining--;
+            updateDisplay(id);
+        }, 1000);
+    }
+
+    function pauseTimer(id) {
+        clearInterval(timerData[id].interval);
+        timerData[id].interval = null;
+    }
+
+    function resetTimer(id) {
+        pauseTimer(id);
+        timerData[id].remaining = getSeconds(id);
+        updateDisplay(id);
+    }
+
+    function allStart() {
+        for (let i = 1; i <= 6; i++) startTimer(i);
+    }
+
+    function allReset() {
+        for (let i = 1; i <= 6; i++) resetTimer(i);
+    }
+
+    function updateDisplay(id) {
+        const t = timerData[id].remaining;
+        const h = Math.floor(t / 3600).toString().padStart(2, '0');
+        const m = Math.floor((t % 3600) / 60).toString().padStart(2, '0');
+        const s = (t % 60).toString().padStart(2, '0');
+        document.getElementById(`display-${id}`).innerText = `${h}:${m}:${s}`;
+    }
+
+    async function handleAlarm(id) {
+        pauseTimer(id);
+        const type = document.getElementById(`type-${id}`).value;
+        const vol = parseFloat(document.getElementById(`vol-${id}`).value);
+
+        if (type === 'beep') {
+            const repeat = parseInt(document.getElementById(`count-${id}`).value);
+            for(let i=0; i<repeat; i++) {
+                beep(vol);
+                await new Promise(r => setTimeout(r, 450));
+            }
+        } else {
+            const msg = document.getElementById(`msg-${id}`).value;
+            const utter = new SpeechSynthesisUtterance(msg);
+            utter.volume = vol;
+            utter.rate = document.getElementById(`rate-${id}`).value;
+            window.speechSynthesis.speak(utter);
+        }
+
+        if (document.getElementById(`auto-${id}`).checked) {
+            timerData[id].remaining = getSeconds(id);
+            updateDisplay(id);
+            startTimer(id);
+        }
+    }
+
+    function beep(vol) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+    }
+</script>
+</body>
+</html>
