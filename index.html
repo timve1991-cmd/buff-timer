@@ -2,24 +2,25 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>BUFF機提醒計時器 - 奶油馬卡龍版</title>
+    <title>BUFF機提醒計時器 - 森林系馬卡龍版</title>
     <style>
         :root {
-            /* 綠馬卡龍配色 */
-            --bg: #e0ece4;           /* 底色：極淡湖綠 */
-            --light-shadow: #ffffff;
-            --dark-shadow: #beccbc;  /* 稍微深一點的陰影色 */
-            --text: #5d756d;
-            --mint: #b8e4d3;        /* 開始鍵顏色 */
-            --pink: #f7d9d9;        /* 重置鍵顏色 */
-            --orange: #fce1c5;      /* 暫停鍵顏色 */
-            --screen-bg: #d1e2d9;   /* 螢幕凹陷處底色 */
+            /* 森林系配色：深綠、草綠、湖水綠、木頭色、淡奶油 */
+            --bg-page: #f2f5f1;        /* 極淡森林綠背景 */
+            --forest-deep: #2d4c3e;    /* 深森林綠（文字與標題） */
+            --leaf-green: #a8dadc;     /* 嫩綠/湖水綠（主色塊） */
+            --mint-light: #e8f3ee;     /* 淺色塊背景 */
+            --button-start: #b7e4c7;   /* 嫩草綠 */
+            --button-pause: #ffdfba;   /* 暖木橘 */
+            --button-reset: #ffb3ba;   /* 柔粉紅 */
+            --input-bg: #ffffff;
+            --text-main: #3d5a4d;
         }
 
         body {
             font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-page);
+            color: var(--text-main);
             padding: 30px 15px;
             margin: 0;
             display: flex;
@@ -29,54 +30,50 @@
 
         /* --- 頂部主控制區 --- */
         .master-controls {
-            background: var(--bg);
+            background-color: #ffffff;
             padding: 25px 40px;
-            border-radius: 40px;
-            box-shadow: 10px 10px 20px var(--dark-shadow), 
-                        -10px -10px 20px var(--light-shadow);
+            border-radius: 25px;
             margin-bottom: 40px;
             text-align: center;
-            width: fit-content;
+            border: 3px solid var(--leaf-green); /* 用邊框代替陰影 */
         }
 
-        h1 { font-size: 1.6rem; margin: 0 0 20px 0; letter-spacing: 2px; }
+        h1 { 
+            font-size: 1.6rem; 
+            margin: 0 0 20px 0; 
+            color: var(--forest-deep);
+            font-weight: 800;
+        }
 
         .btn-master {
             padding: 12px 35px;
-            margin: 0 10px;
-            border-radius: 20px;
+            margin: 5px;
+            border-radius: 12px;
             border: none;
             font-weight: bold;
             cursor: pointer;
-            color: var(--text);
-            transition: all 0.2s;
-            box-shadow: 5px 5px 10px var(--dark-shadow), 
-                        -5px -5px 10px var(--light-shadow);
+            transition: opacity 0.2s;
+            font-size: 0.95rem;
         }
 
-        .btn-master.start { background-color: var(--mint); }
-        .btn-master.reset { background-color: var(--pink); }
-        .btn-master:active {
-            box-shadow: inset 4px 4px 8px var(--dark-shadow), 
-                        inset -4px -4px 8px var(--light-shadow);
-        }
+        .btn-master.start { background-color: var(--button-start); color: #2d4c3e; }
+        .btn-master.reset { background-color: var(--button-reset); color: #7a4a4a; }
 
         /* --- 計時器網格 --- */
         .timer-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 40px;
+            gap: 25px;
             width: 100%;
             max-width: 1100px;
         }
 
-        /* --- 計時器卡片 (凸起感) --- */
+        /* --- 計時器卡片 (純色塊設計) --- */
         .timer-card {
-            background: var(--bg);
-            border-radius: 40px;
+            background-color: #ffffff;
+            border-radius: 30px;
             padding: 25px;
-            box-shadow: 15px 15px 30px var(--dark-shadow), 
-                        -15px -15px 30px var(--light-shadow);
+            border: 2px solid #e0e7e1;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -86,117 +83,108 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 10px;
         }
 
-        /* 凹陷式輸入框 */
-        .msg-input, .input-box input {
-            border: none;
-            background: var(--bg);
-            box-shadow: inset 4px 4px 8px var(--dark-shadow), 
-                        inset -4px -4px 8px var(--light-shadow);
-            border-radius: 12px;
-            padding: 10px;
-            color: var(--text);
+        .msg-input {
+            border: 2px solid var(--mint-light);
+            background-color: var(--mint-light);
+            border-radius: 10px;
+            padding: 8px 12px;
+            color: var(--forest-deep);
             font-weight: bold;
             outline: none;
-            text-align: center;
         }
 
-        /* --- 計時顯示區 (深層凹陷) --- */
+        /* --- 數字顯示區 (平面色塊) --- */
         .display {
             font-family: 'Courier New', monospace;
             font-size: 3.2rem;
             font-weight: bold;
             text-align: center;
-            background: var(--screen-bg);
-            color: #4b6b5d;
-            border-radius: 30px;
-            padding: 25px 10px;
-            margin: 10px 0;
-            box-shadow: inset 8px 8px 16px #b8c7be, 
-                        inset -8px -8px 16px #ebf7f0;
-            letter-spacing: 2px;
+            background-color: var(--mint-light);
+            color: var(--forest-deep);
+            border-radius: 20px;
+            padding: 20px 10px;
+            margin: 5px 0;
+            border: 2px solid transparent;
         }
 
         .display.alarm {
-            background-color: var(--pink);
-            color: #a05252;
-            animation: blink 1s infinite;
+            background-color: var(--button-reset);
+            color: #ffffff;
+            animation: flash 0.8s infinite;
         }
 
-        @keyframes blink { 50% { opacity: 0.6; } }
+        @keyframes flash { 50% { opacity: 0.7; } }
 
-        /* --- 控制按鈕 (凸起感) --- */
-        .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        /* --- 控制按鈕 (純色塊) --- */
+        .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
         .controls button {
             border: none;
-            border-radius: 18px;
-            padding: 14px;
+            border-radius: 12px;
+            padding: 12px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 5px 5px 10px var(--dark-shadow), 
-                        -5px -5px 10px var(--light-shadow);
-            transition: 0.2s;
-            color: var(--text);
+            transition: transform 0.1s;
         }
-        .btn-s { background-color: var(--mint); }
-        .btn-p { background-color: var(--orange); }
-        .btn-r { background-color: var(--pink); }
-        .controls button:active {
-            box-shadow: inset 3px 3px 6px var(--dark-shadow), 
-                        inset -3px -3px 6px var(--light-shadow);
-        }
+        .btn-s { background-color: var(--button-start); color: #2d4c3e; }
+        .btn-p { background-color: var(--button-pause); color: #7a5e3a; }
+        .btn-r { background-color: var(--button-reset); color: #7a4a4a; }
+        .controls button:active { transform: scale(0.95); }
 
-        /* --- 下方設定區 (凹陷面板) --- */
+        /* --- 下方設定區 --- */
         .settings-panel {
-            background: var(--bg);
-            padding: 20px;
-            border-radius: 25px;
-            box-shadow: inset 4px 4px 10px var(--dark-shadow), 
-                        inset -4px -4px 10px var(--light-shadow);
+            background-color: #f9fbf9;
+            padding: 18px;
+            border-radius: 20px;
             font-size: 13px;
+            border: 1px solid #eee;
         }
 
-        .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
         
         select {
-            border: none;
-            background: var(--bg);
-            box-shadow: 3px 3px 6px var(--dark-shadow), -3px -3px 6px var(--light-shadow);
-            border-radius: 10px;
-            padding: 6px;
-            color: var(--text);
+            border: 1px solid #ddd;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 5px;
             outline: none;
         }
 
-        /* 新擬物風 Slider */
+        /* 平面化 Slider */
         input[type="range"] {
             -webkit-appearance: none;
-            background: var(--bg);
-            box-shadow: inset 2px 2px 5px var(--dark-shadow), inset -2px -2px 5px var(--light-shadow);
-            height: 10px;
-            border-radius: 5px;
+            background: #e0e7e1;
+            height: 6px;
+            border-radius: 3px;
             width: 100px;
         }
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: var(--mint);
-            box-shadow: 2px 2px 5px var(--dark-shadow);
+            width: 18px;
+            height: 18px;
+            background: var(--forest-deep);
             border-radius: 50%;
             cursor: pointer;
         }
 
-        .input-group { display: flex; justify-content: center; gap: 15px; }
-        .input-box span { font-size: 11px; display: block; margin-top: 5px; color: #8ea49c; }
+        .input-group { display: flex; justify-content: center; gap: 12px; }
+        .input-box input {
+            width: 50px;
+            border: 2px solid var(--mint-light);
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 8px;
+            text-align: center;
+            outline: none;
+        }
+        .input-box span { font-size: 11px; color: #8ea49c; margin-top: 4px; display: block; }
     </style>
 </head>
 <body>
 
 <div class="master-controls">
-    <h1>🌿 BUFF機提醒計時器</h1>
+    <h1>🌲 BUFF機提醒計時器</h1>
     <button class="btn-master start" onclick="allStart()">⚡ 全體啟動</button>
     <button class="btn-master reset" onclick="allReset()">🔄 全體重置</button>
 </div>
@@ -204,6 +192,7 @@
 <div class="timer-grid" id="app"></div>
 
 <script>
+    /* 核心功能完全保留，僅視覺代碼更新 */
     const app = document.getElementById('app');
     const timerData = {};
     let audioCtx;
@@ -256,7 +245,7 @@
                     <div class="row"><span>音高</span><input type="range" id="freq-${id}" min="200" max="2000" value="440"></div>
                 </div>
                 <div id="panel-tts-${id}">
-                    <input type="text" id="msg-${id}" value="BUFF ${id} 到了" class="msg-input" style="width:90%; margin-bottom:10px;">
+                    <input type="text" id="msg-${id}" value="BUFF ${id} 到了" class="msg-input" style="width:90%; margin-bottom:10px; background:#fff; border:1px solid #ddd;">
                     <div class="row"><span>音調</span><input type="range" id="pitch-${id}" min="0" max="2" step="0.1" value="1.0"></div>
                     <div class="row"><span>語速</span><input type="range" id="rate-${id}" min="0.5" max="2" step="0.1" value="1.0"></div>
                 </div>
@@ -267,6 +256,7 @@
         timerData[id] = { interval: null, remaining: 0 };
     }
 
+    /* 邏輯函數保持不變 */
     function toggleMode(id) {
         const type = document.getElementById(`type-${id}`).value;
         document.getElementById(`panel-beep-${id}`).style.display = type === 'beep' ? 'block' : 'none';
