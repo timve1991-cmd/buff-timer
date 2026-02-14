@@ -2,203 +2,201 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>BUFF機提醒計時器 - 柔和綠境版</title>
+    <title>BUFF機提醒計時器 - 奶油馬卡龍版</title>
     <style>
-        :root { 
-            /* 馬卡龍 & 湖水綠色系 */
-            --primary: #99d9d9;       /* 湖水綠 */
-            --primary-dark: #76baba;
-            --bg: #f0f7f7;            /* 極淺湖綠底色 */
-            --card-bg: #ffffff;
-            --text-main: #4a5d5d;     /* 深灰綠 */
-            --accent: #a8dadc;        /* 淺藍 */
-            --danger: #ffb3ba;        /* 馬卡龍紅 */
-            --success: #baffc9;       /* 馬卡龍綠 */
-            --warning: #ffdfba;       /* 馬卡龍橘 */
-            --timer-bg: #e0f2f1;      /* 計時器背景 */
-            --timer-text: #2d6a4f;    /* 計時器數字顏色 */
-            --shadow: 0 8px 30px rgba(0,0,0,0.05);
+        :root {
+            /* 奶油綠馬卡龍配色 */
+            --bg: #e0ece4;           /* 底色：極淡湖綠 */
+            --light-shadow: #ffffff;
+            --dark-shadow: #beccbc;  /* 稍微深一點的陰影色 */
+            --text: #5d756d;
+            --mint: #b8e4d3;        /* 開始鍵顏色 */
+            --pink: #f7d9d9;        /* 重置鍵顏色 */
+            --orange: #fce1c5;      /* 暫停鍵顏色 */
+            --screen-bg: #d1e2d9;   /* 螢幕凹陷處底色 */
         }
 
-        body { 
-            font-family: "PingFang TC", "Microsoft JhengHei", sans-serif; 
-            background: var(--bg); 
-            color: var(--text-main);
-            padding: 20px; 
+        body {
+            font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 30px 15px;
             margin: 0;
-            line-height: 1.6;
-        }
-        
-        /* 標題與主控制區 */
-        .master-controls {
-            text-align: center;
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 24px;
-            margin: 0 auto 30px auto;
-            max-width: 1050px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255,255,255,0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        h1 {
-            color: var(--primary-dark);
-            font-weight: 600;
-            letter-spacing: 1px;
+        /* --- 頂部主控制區 --- */
+        .master-controls {
+            background: var(--bg);
+            padding: 25px 40px;
+            border-radius: 40px;
+            box-shadow: 10px 10px 20px var(--dark-shadow), 
+                        -10px -10px 20px var(--light-shadow);
+            margin-bottom: 40px;
+            text-align: center;
+            width: fit-content;
         }
+
+        h1 { font-size: 1.6rem; margin: 0 0 20px 0; letter-spacing: 2px; }
 
         .btn-master {
-            font-size: 1rem; 
-            padding: 12px 40px; 
-            margin: 8px;
-            border-radius: 50px; 
-            cursor: pointer; 
+            padding: 12px 35px;
+            margin: 0 10px;
+            border-radius: 20px;
             border: none;
-            font-weight: bold; 
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--text);
+            transition: all 0.2s;
+            box-shadow: 5px 5px 10px var(--dark-shadow), 
+                        -5px -5px 10px var(--light-shadow);
         }
 
-        .btn-master.start { 
-            background: var(--success); 
-            color: #2d6a4f; 
-        }
-        .btn-master.reset { 
-            background: var(--danger); 
-            color: #a05252; 
-        }
-        .btn-master:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
-
-        /* 卡片網格 */
-        .timer-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-            gap: 25px; 
-            max-width: 1100px; 
-            margin: 0 auto;
+        .btn-master.start { background-color: var(--mint); }
+        .btn-master.reset { background-color: var(--pink); }
+        .btn-master:active {
+            box-shadow: inset 4px 4px 8px var(--dark-shadow), 
+                        inset -4px -4px 8px var(--light-shadow);
         }
 
-        /* 計時器卡片 */
-        .timer-card { 
-            background: var(--card-bg); 
-            border-radius: 20px; 
-            padding: 20px; 
-            border: 1px solid rgba(255,255,255,0.5);
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease;
+        /* --- 計時器網格 --- */
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            width: 100%;
+            max-width: 1100px;
         }
-        .timer-card:hover { transform: translateY(-5px); }
 
-        /* 顯示螢幕 */
-        .display { 
-            font-family: 'Courier New', monospace; 
-            font-size: 3.2rem; 
-            font-weight: bold; 
-            text-align: center; 
-            margin: 15px 0; 
-            background: var(--timer-bg); 
-            color: var(--timer-text); 
-            border-radius: 15px; 
-            padding: 15px; 
+        /* --- 計時器卡片 (凸起感) --- */
+        .timer-card {
+            background: var(--bg);
+            border-radius: 40px;
+            padding: 25px;
+            box-shadow: 15px 15px 30px var(--dark-shadow), 
+                        -15px -15px 30px var(--light-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        /* 凹陷式輸入框 */
+        .msg-input, .input-box input {
+            border: none;
+            background: var(--bg);
+            box-shadow: inset 4px 4px 8px var(--dark-shadow), 
+                        inset -4px -4px 8px var(--light-shadow);
+            border-radius: 12px;
+            padding: 10px;
+            color: var(--text);
+            font-weight: bold;
+            outline: none;
+            text-align: center;
+        }
+
+        /* --- 計時顯示區 (深層凹陷) --- */
+        .display {
+            font-family: 'Courier New', monospace;
+            font-size: 3.2rem;
+            font-weight: bold;
+            text-align: center;
+            background: var(--screen-bg);
+            color: #4b6b5d;
+            border-radius: 30px;
+            padding: 25px 10px;
+            margin: 10px 0;
+            box-shadow: inset 8px 8px 16px #b8c7be, 
+                        inset -8px -8px 16px #ebf7f0;
             letter-spacing: 2px;
-            border: 2px solid #ffffff;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
-        }
-        
-        .display.alarm { 
-            background: var(--danger); 
-            color: white; 
-            animation: pulse 1s infinite; 
-        }
-        @keyframes pulse { 50% { opacity: 0.8; } }
-
-        /* 輸入框組 */
-        .input-group { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .input-box { display: flex; flex-direction: column; align-items: center; font-size: 12px; color: #88a0a0; }
-        .input-box input { 
-            background: #f8ffff; 
-            color: var(--text-main); 
-            border: 1.5px solid var(--primary);
-            width: 55px; 
-            text-align: center; 
-            border-radius: 10px; 
-            font-size: 1.1rem; 
-            padding: 8px 5px;
-            outline: none;
         }
 
-        /* 按鈕組 */
-        .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .controls button { 
-            cursor: pointer; 
-            border: none; 
-            border-radius: 12px; 
-            padding: 12px; 
-            font-weight: bold; 
+        .display.alarm {
+            background-color: var(--pink);
+            color: #a05252;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0.6; } }
+
+        /* --- 控制按鈕 (凸起感) --- */
+        .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        .controls button {
+            border: none;
+            border-radius: 18px;
+            padding: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 5px 5px 10px var(--dark-shadow), 
+                        -5px -5px 10px var(--light-shadow);
             transition: 0.2s;
+            color: var(--text);
         }
-        .btn-s { background: var(--success); color: #2d6a4f; }
-        .btn-p { background: var(--warning); color: #856404; }
-        .btn-r { background: var(--danger); color: #a05252; }
-        .controls button:active { opacity: 0.7; transform: scale(0.95); }
+        .btn-s { background-color: var(--mint); }
+        .btn-p { background-color: var(--orange); }
+        .btn-r { background-color: var(--pink); }
+        .controls button:active {
+            box-shadow: inset 3px 3px 6px var(--dark-shadow), 
+                        inset -3px -3px 6px var(--light-shadow);
+        }
 
-        /* 設定面板 */
-        .settings-panel { 
-            font-size: 13px; 
-            background: #fdfdfd; 
-            padding: 15px; 
-            border-radius: 15px; 
-            border: 1px dashed var(--primary); 
+        /* --- 下方設定區 (凹陷面板) --- */
+        .settings-panel {
+            background: var(--bg);
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: inset 4px 4px 10px var(--dark-shadow), 
+                        inset -4px -4px 10px var(--light-shadow);
+            font-size: 13px;
         }
-        .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+
+        .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
         
-        select, .msg-input { 
-            background: #fff; 
-            color: var(--text-main); 
-            border: 1px solid var(--primary); 
-            padding: 6px; 
-            border-radius: 8px;
+        select {
+            border: none;
+            background: var(--bg);
+            box-shadow: 3px 3px 6px var(--dark-shadow), -3px -3px 6px var(--light-shadow);
+            border-radius: 10px;
+            padding: 6px;
+            color: var(--text);
             outline: none;
         }
-        
-        /* 自定義 Slider 樣式 */
-        input[type="range"] { 
+
+        /* 新擬物風 Slider */
+        input[type="range"] {
             -webkit-appearance: none;
-            width: 100px;
-            height: 6px;
-            background: var(--primary);
+            background: var(--bg);
+            box-shadow: inset 2px 2px 5px var(--dark-shadow), inset -2px -2px 5px var(--light-shadow);
+            height: 10px;
             border-radius: 5px;
-            outline: none;
+            width: 100px;
         }
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            background: white;
-            border: 2px solid var(--primary);
+            width: 20px;
+            height: 20px;
+            background: var(--mint);
+            box-shadow: 2px 2px 5px var(--dark-shadow);
             border-radius: 50%;
             cursor: pointer;
         }
 
-        .timer-header input.msg-input {
-            border: none;
-            border-bottom: 2px solid var(--primary);
-            border-radius: 0;
-            background: transparent;
-            font-size: 1.1rem;
-            width: 120px;
-        }
-
-        /* Checkbox 樣式優化 */
-        input[type="checkbox"] {
-            accent-color: var(--primary-dark);
-        }
+        .input-group { display: flex; justify-content: center; gap: 15px; }
+        .input-box span { font-size: 11px; display: block; margin-top: 5px; color: #8ea49c; }
     </style>
 </head>
 <body>
 
 <div class="master-controls">
-    <h1 style="margin: 0 0 15px 0;">🌿 BUFF機提醒計時器</h1>
+    <h1>🌿 BUFF機提醒計時器</h1>
     <button class="btn-master start" onclick="allStart()">⚡ 全體啟動</button>
     <button class="btn-master reset" onclick="allReset()">🔄 全體重置</button>
 </div>
@@ -211,9 +209,7 @@
     let audioCtx;
     let voices = [];
 
-    function loadVoices() {
-        voices = window.speechSynthesis.getVoices();
-    }
+    function loadVoices() { voices = window.speechSynthesis.getVoices(); }
     window.speechSynthesis.onvoiceschanged = loadVoices;
     loadVoices();
 
@@ -232,16 +228,14 @@
         const card = document.createElement('div');
         card.className = 'timer-card';
         card.innerHTML = `
-            <div class="timer-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <input type="text" class="msg-input" style="color:var(--primary-dark); font-weight:bold;" value="BUFF ${id}">
-                <label style="font-size:13px; cursor:pointer; color:#778888;">
-                    <input type="checkbox" id="auto-${id}"> 自動循環
-                </label>
+            <div class="timer-header">
+                <input type="text" class="msg-input" style="width:110px;" value="BUFF ${id}">
+                <label style="cursor:pointer; font-size:13px;"><input type="checkbox" id="auto-${id}"> 自動</label>
             </div>
             <div class="input-group">
-                <div class="input-box"><input type="number" id="h-${id}" value="0" min="0">時</div>
-                <div class="input-box"><input type="number" id="m-${id}" value="0" min="0" max="59">分</div>
-                <div class="input-box"><input type="number" id="s-${id}" value="0" min="0" max="59">秒</div>
+                <div class="input-box"><input type="number" id="h-${id}" value="0" min="0"><span>時</span></div>
+                <div class="input-box"><input type="number" id="m-${id}" value="0" min="0" max="59"><span>分</span></div>
+                <div class="input-box"><input type="number" id="s-${id}" value="0" min="0" max="59"><span>秒</span></div>
             </div>
             <div class="display" id="display-${id}">00:00:00</div>
             <div class="controls">
@@ -253,22 +247,20 @@
                 <div class="row">
                     <span>提示模式</span>
                     <select id="type-${id}" onchange="toggleMode(${id})">
-                        <option value="beep">嗶聲 (Beep)</option>
-                        <option value="tts" selected>語音 (TTS)</option>
+                        <option value="beep">嗶聲</option>
+                        <option value="tts" selected>語音</option>
                     </select>
                 </div>
                 <div id="panel-beep-${id}" style="display:none">
-                    <div class="row"><span>響鈴次數</span><input type="number" id="count-${id}" value="3" min="1" style="width:45px" class="msg-input"></div>
-                    <div class="row"><span>嗶聲音高</span><input type="range" id="freq-${id}" min="200" max="2000" step="50" value="440"></div>
+                    <div class="row"><span>次數</span><input type="number" id="count-${id}" value="3" style="width:45px"></div>
+                    <div class="row"><span>音高</span><input type="range" id="freq-${id}" min="200" max="2000" value="440"></div>
                 </div>
                 <div id="panel-tts-${id}">
-                    <input type="text" id="msg-${id}" value="BUFF ${id} 到了" class="msg-input" style="width:92%; margin-bottom:10px;">
-                    <div class="row"><span>聲調高低</span><input type="range" id="pitch-${id}" min="0" max="2" step="0.1" value="1.0"></div>
-                    <div class="row"><span>語音速度</span><input type="range" id="rate-${id}" min="0.5" max="2" step="0.1" value="1.0"></div>
+                    <input type="text" id="msg-${id}" value="BUFF ${id} 到了" class="msg-input" style="width:90%; margin-bottom:10px;">
+                    <div class="row"><span>音調</span><input type="range" id="pitch-${id}" min="0" max="2" step="0.1" value="1.0"></div>
+                    <div class="row"><span>語速</span><input type="range" id="rate-${id}" min="0.5" max="2" step="0.1" value="1.0"></div>
                 </div>
-                <div class="row" style="margin-top:5px; padding-top:5px; border-top:1px solid #eee;">
-                    <span>總音量</span><input type="range" id="vol-${id}" min="0" max="1" step="0.1" value="0.8">
-                </div>
+                <div class="row"><span>音量</span><input type="range" id="vol-${id}" min="0" max="1" step="0.1" value="0.8"></div>
             </div>
         `;
         app.appendChild(card);
@@ -291,7 +283,6 @@
             timerData[id].remaining = h * 3600 + m * 60 + s;
         }
         if (timerData[id].remaining <= 0) return;
-        
         timerData[id].interval = setInterval(() => {
             if (timerData[id].remaining <= 0) { handleAlarm(id); return; }
             timerData[id].remaining--;
@@ -321,7 +312,6 @@
         document.getElementById(`display-${id}`).classList.add('alarm');
         const type = document.getElementById(`type-${id}`).value;
         const vol = parseFloat(document.getElementById(`vol-${id}`).value);
-
         if (type === 'beep') {
             const count = parseInt(document.getElementById(`count-${id}`).value) || 1;
             const freq = parseInt(document.getElementById(`freq-${id}`).value);
@@ -332,7 +322,6 @@
         } else {
             window.speechSynthesis.cancel();
             const utter = new SpeechSynthesisUtterance(document.getElementById(`msg-${id}`).value);
-            if (voices.length === 0) loadVoices();
             const targetVoice = voices.find(v => v.lang === 'zh-TW') || voices.find(v => v.lang.includes('zh'));
             if (targetVoice) utter.voice = targetVoice;
             utter.volume = vol;
@@ -340,7 +329,6 @@
             utter.rate = parseFloat(document.getElementById(`rate-${id}`).value);
             window.speechSynthesis.speak(utter);
         }
-
         if (document.getElementById(`auto-${id}`).checked) {
             setTimeout(() => { resetTimer(id); startTimer(id); }, 2000);
         }
@@ -354,14 +342,10 @@
         gain.gain.setValueAtTime(vol, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.5);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.5);
     }
 
-    function allStart() { 
-        unlockMobileVoice();
-        for (let i = 1; i <= 6; i++) startTimer(i); 
-    }
+    function allStart() { unlockMobileVoice(); for (let i = 1; i <= 6; i++) startTimer(i); }
     function allReset() { for (let i = 1; i <= 6; i++) resetTimer(i); }
 </script>
 </body>
