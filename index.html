@@ -2,19 +2,20 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>BUFF機提醒計時器</title>
+    <title>BUFF機提醒計時器 - 大地森林版</title>
     <style>
         :root {
-            /* 森林系配色：深綠、草綠、湖水綠、木頭色、淡奶油 */
-            --bg-page: #336666;        /* 極淡森林綠背景 */
-            --forest-deep: #2d4c3e;    /* 深森林綠（文字與標題） */
-            --leaf-green: #a8dadc;     /* 嫩綠/湖水綠（主色塊） */
-            --mint-light: #e8f3ee;     /* 淺色塊背景 */
-            --button-start: #b7e4c7;   /* 嫩草綠 */
-            --button-pause: #ffdfba;   /* 暖木橘 */
-            --button-reset: #ffb3ba;   /* 柔粉紅 */
-            --input-bg: #ffffff;
-            --text-main: #3d5a4d;
+            /* 大地森林色系 */
+            --bg-page: #f5f2ed;        /* 沙色背景 */
+            --forest-deep: #4a5d4e;    /* 森林深綠 */
+            --sand-dark: #d4c3a1;      /* 深沙色 */
+            --sand-light: #e9e0cf;     /* 淺沙色塊 */
+            --earth-brown: #8d7b68;    /* 大地棕 */
+            --btn-start: #a3b18a;      /* 苔蘚綠 */
+            --btn-pause: #ddb892;      /* 木紋色 */
+            --btn-reset: #cb997e;      /* 陶土紅 */
+            --text-main: #3e362e;      /* 深木色文字 */
+            --card-bg: #ffffff;
         }
 
         body {
@@ -30,34 +31,35 @@
 
         /* --- 頂部主控制區 --- */
         .master-controls {
-            background-color: #ffffff;
+            background-color: var(--card-bg);
             padding: 25px 40px;
-            border-radius: 25px;
+            border-radius: 20px;
             margin-bottom: 40px;
             text-align: center;
-            border: 3px solid var(--leaf-green); /* 用邊框代替陰影 */
+            border-bottom: 5px solid var(--sand-dark);
         }
 
         h1 { 
             font-size: 1.6rem; 
             margin: 0 0 20px 0; 
             color: var(--forest-deep);
-            font-weight: 800;
+            letter-spacing: 2px;
         }
 
         .btn-master {
             padding: 12px 35px;
             margin: 5px;
-            border-radius: 12px;
+            border-radius: 10px;
             border: none;
             font-weight: bold;
             cursor: pointer;
             transition: opacity 0.2s;
             font-size: 0.95rem;
+            color: white;
         }
 
-        .btn-master.start { background-color: var(--button-start); color: #2d4c3e; }
-        .btn-master.reset { background-color: var(--button-reset); color: #7a4a4a; }
+        .btn-master.start { background-color: var(--btn-start); }
+        .btn-master.reset { background-color: var(--btn-reset); }
 
         /* --- 計時器網格 --- */
         .timer-grid {
@@ -68,12 +70,12 @@
             max-width: 1100px;
         }
 
-        /* --- 計時器卡片 (純色塊設計) --- */
+        /* --- 計時器卡片 --- */
         .timer-card {
-            background-color: #ffffff;
-            border-radius: 30px;
+            background-color: var(--card-bg);
+            border-radius: 25px;
             padding: 25px;
-            border: 2px solid #e0e7e1;
+            border: 1px solid var(--sand-light);
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -86,11 +88,11 @@
         }
 
         .msg-input {
-            border: 2px solid var(--mint-light);
-            background-color: var(--mint-light);
-            border-radius: 10px;
+            border: 2px solid var(--sand-light);
+            background-color: #fff;
+            border-radius: 8px;
             padding: 8px 12px;
-            color: var(--forest-deep);
+            color: var(--earth-brown);
             font-weight: bold;
             outline: none;
         }
@@ -101,60 +103,60 @@
             font-size: 3.2rem;
             font-weight: bold;
             text-align: center;
-            background-color: var(--mint-light);
+            background-color: var(--sand-light);
             color: var(--forest-deep);
-            border-radius: 20px;
+            border-radius: 15px;
             padding: 20px 10px;
             margin: 5px 0;
-            border: 2px solid transparent;
         }
 
         .display.alarm {
-            background-color: var(--button-reset);
+            background-color: var(--btn-reset);
             color: #ffffff;
             animation: flash 0.8s infinite;
         }
 
         @keyframes flash { 50% { opacity: 0.7; } }
 
-        /* --- 控制按鈕 (純色塊) --- */
+        /* --- 控制按鈕 --- */
         .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
         .controls button {
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             padding: 12px;
             font-weight: bold;
             cursor: pointer;
+            color: white;
             transition: transform 0.1s;
         }
-        .btn-s { background-color: var(--button-start); color: #2d4c3e; }
-        .btn-p { background-color: var(--button-pause); color: #7a5e3a; }
-        .btn-r { background-color: var(--button-reset); color: #7a4a4a; }
+        .btn-s { background-color: var(--btn-start); }
+        .btn-p { background-color: var(--btn-pause); }
+        .btn-r { background-color: var(--btn-reset); }
         .controls button:active { transform: scale(0.95); }
 
         /* --- 下方設定區 --- */
         .settings-panel {
-            background-color: #f9fbf9;
+            background-color: #fcfaf7;
             padding: 18px;
-            border-radius: 20px;
+            border-radius: 15px;
             font-size: 13px;
-            border: 1px solid #eee;
+            border: 1px solid var(--sand-light);
         }
 
         .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
         
         select {
-            border: 1px solid #ddd;
+            border: 1px solid var(--sand-dark);
             background-color: #fff;
-            border-radius: 8px;
+            border-radius: 5px;
             padding: 5px;
-            outline: none;
+            color: var(--text-main);
         }
 
-        /* 平面化 Slider */
+        /* 沙色系 Slider */
         input[type="range"] {
             -webkit-appearance: none;
-            background: #e0e7e1;
+            background: var(--sand-light);
             height: 6px;
             border-radius: 3px;
             width: 100px;
@@ -163,7 +165,7 @@
             -webkit-appearance: none;
             width: 18px;
             height: 18px;
-            background: var(--forest-deep);
+            background: var(--earth-brown);
             border-radius: 50%;
             cursor: pointer;
         }
@@ -171,20 +173,20 @@
         .input-group { display: flex; justify-content: center; gap: 12px; }
         .input-box input {
             width: 50px;
-            border: 2px solid var(--mint-light);
+            border: 2px solid var(--sand-light);
             background-color: #fff;
-            border-radius: 10px;
+            border-radius: 8px;
             padding: 8px;
             text-align: center;
             outline: none;
         }
-        .input-box span { font-size: 11px; color: #8ea49c; margin-top: 4px; display: block; }
+        .input-box span { font-size: 11px; color: var(--earth-brown); margin-top: 4px; display: block; }
     </style>
 </head>
 <body>
 
 <div class="master-controls">
-    <h1>⏱️ BUFF機提醒計時器</h1>
+    <h1>🍂 大地森林提醒器</h1>
     <button class="btn-master start" onclick="allStart()">⚡ 全體啟動</button>
     <button class="btn-master reset" onclick="allReset()">🔄 全體重置</button>
 </div>
@@ -192,7 +194,6 @@
 <div class="timer-grid" id="app"></div>
 
 <script>
-    /* 核心功能完全保留，僅視覺代碼更新 */
     const app = document.getElementById('app');
     const timerData = {};
     let audioCtx;
@@ -211,9 +212,15 @@
         if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
+    // 初始化 6 個計時器
     for (let i = 1; i <= 6; i++) { createTimer(i); }
 
     function createTimer(id) {
+        // 設定初始時間：如果是第一個 BUFF (id=1)，預設為 4:30
+        const defaultMin = (id === 1) ? 4 : 0;
+        const defaultSec = (id === 1) ? 30 : 0;
+        const defaultDisplay = (id === 1) ? "00:04:30" : "00:00:00";
+
         const card = document.createElement('div');
         card.className = 'timer-card';
         card.innerHTML = `
@@ -223,10 +230,10 @@
             </div>
             <div class="input-group">
                 <div class="input-box"><input type="number" id="h-${id}" value="0" min="0"><span>時</span></div>
-                <div class="input-box"><input type="number" id="m-${id}" value="0" min="0" max="59"><span>分</span></div>
-                <div class="input-box"><input type="number" id="s-${id}" value="0" min="0" max="59"><span>秒</span></div>
+                <div class="input-box"><input type="number" id="m-${id}" value="${defaultMin}" min="0" max="59"><span>分</span></div>
+                <div class="input-box"><input type="number" id="s-${id}" value="${defaultSec}" min="0" max="59"><span>秒</span></div>
             </div>
-            <div class="display" id="display-${id}">00:00:00</div>
+            <div class="display" id="display-${id}">${defaultDisplay}</div>
             <div class="controls">
                 <button class="btn-s" onclick="startTimer(${id})">開始</button>
                 <button class="btn-p" onclick="pauseTimer(${id})">暫停</button>
@@ -236,16 +243,16 @@
                 <div class="row">
                     <span>提示模式</span>
                     <select id="type-${id}" onchange="toggleMode(${id})">
-                        <option value="beep">嗶聲</option>
-                        <option value="tts" selected>語音</option>
+                        <option value="beep" selected>嗶聲 (Beep)</option>
+                        <option value="tts">語音 (TTS)</option>
                     </select>
                 </div>
-                <div id="panel-beep-${id}" style="display:none">
-                    <div class="row"><span>次數</span><input type="number" id="count-${id}" value="3" style="width:45px"></div>
+                <div id="panel-beep-${id}" style="display:block">
+                    <div class="row"><span>次數</span><input type="number" id="count-${id}" value="3" style="width:45px" class="msg-input"></div>
                     <div class="row"><span>音高</span><input type="range" id="freq-${id}" min="200" max="2000" value="440"></div>
                 </div>
-                <div id="panel-tts-${id}">
-                    <input type="text" id="msg-${id}" value="BUFF ${id} 到了" class="msg-input" style="width:90%; margin-bottom:10px; background:#fff; border:1px solid #ddd;">
+                <div id="panel-tts-${id}" style="display:none">
+                    <input type="text" id="msg-${id}" value="BUFF ${id} 到了" class="msg-input" style="width:90%; margin-bottom:10px;">
                     <div class="row"><span>音調</span><input type="range" id="pitch-${id}" min="0" max="2" step="0.1" value="1.0"></div>
                     <div class="row"><span>語速</span><input type="range" id="rate-${id}" min="0.5" max="2" step="0.1" value="1.0"></div>
                 </div>
@@ -253,10 +260,14 @@
             </div>
         `;
         app.appendChild(card);
-        timerData[id] = { interval: null, remaining: 0 };
+        
+        // 紀錄初始化的剩餘時間
+        timerData[id] = { 
+            interval: null, 
+            remaining: (id === 1) ? (4 * 60 + 30) : 0 
+        };
     }
 
-    /* 邏輯函數保持不變 */
     function toggleMode(id) {
         const type = document.getElementById(`type-${id}`).value;
         document.getElementById(`panel-beep-${id}`).style.display = type === 'beep' ? 'block' : 'none';
@@ -266,13 +277,17 @@
     function startTimer(id) {
         unlockMobileVoice();
         if (timerData[id].interval) return;
+        
+        // 如果目前時間為0，則讀取輸入框數值
         if (timerData[id].remaining <= 0) {
             const h = parseInt(document.getElementById(`h-${id}`).value) || 0;
             const m = parseInt(document.getElementById(`m-${id}`).value) || 0;
             const s = parseInt(document.getElementById(`s-${id}`).value) || 0;
             timerData[id].remaining = h * 3600 + m * 60 + s;
         }
+        
         if (timerData[id].remaining <= 0) return;
+        
         timerData[id].interval = setInterval(() => {
             if (timerData[id].remaining <= 0) { handleAlarm(id); return; }
             timerData[id].remaining--;
@@ -284,7 +299,11 @@
 
     function resetTimer(id) {
         pauseTimer(id);
-        timerData[id].remaining = 0;
+        // 重置時讀取當前輸入框的值（確保 4:30 也能被重置回來）
+        const h = parseInt(document.getElementById(`h-${id}`).value) || 0;
+        const m = parseInt(document.getElementById(`m-${id}`).value) || 0;
+        const s = parseInt(document.getElementById(`s-${id}`).value) || 0;
+        timerData[id].remaining = h * 3600 + m * 60 + s;
         updateDisplay(id);
         document.getElementById(`display-${id}`).classList.remove('alarm');
     }
@@ -302,6 +321,7 @@
         document.getElementById(`display-${id}`).classList.add('alarm');
         const type = document.getElementById(`type-${id}`).value;
         const vol = parseFloat(document.getElementById(`vol-${id}`).value);
+
         if (type === 'beep') {
             const count = parseInt(document.getElementById(`count-${id}`).value) || 1;
             const freq = parseInt(document.getElementById(`freq-${id}`).value);
@@ -312,6 +332,7 @@
         } else {
             window.speechSynthesis.cancel();
             const utter = new SpeechSynthesisUtterance(document.getElementById(`msg-${id}`).value);
+            if (voices.length === 0) loadVoices();
             const targetVoice = voices.find(v => v.lang === 'zh-TW') || voices.find(v => v.lang.includes('zh'));
             if (targetVoice) utter.voice = targetVoice;
             utter.volume = vol;
@@ -319,6 +340,7 @@
             utter.rate = parseFloat(document.getElementById(`rate-${id}`).value);
             window.speechSynthesis.speak(utter);
         }
+
         if (document.getElementById(`auto-${id}`).checked) {
             setTimeout(() => { resetTimer(id); startTimer(id); }, 2000);
         }
